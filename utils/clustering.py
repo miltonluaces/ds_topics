@@ -6,6 +6,11 @@ import matplotlib.pyplot as plt
 from sklearn.metrics import silhouette_score, silhouette_samples
 import matplotlib.cm as cm
 
+def silhouette_scoring(ds, label_column):
+    y = ds[label_column]
+    X = ds.drop([label_column], axis=1)
+    return silhouette_score(X,y)
+  
 def silhouette_analysis(ds, label_column):
     y = ds[label_column]
     X = ds.drop([label_column], axis=1)
@@ -51,6 +56,25 @@ def silhouette_analysis(ds, label_column):
 
     print('Silhouette score = ', round(s_avg,4))
     plt.show()
+
+def weight_features(ds, label_column, weights):
+    dsf = ds.drop(label_column, axis=1)
+    wds = dsf * weights
+    wds['target'] = ds['target']
+    return wds
+
+def weighted_silhouette(ds, label_column, weights):
+    wds = weight_features(ds, label_column, weights)
+    return silhouette_scoring(wds, 'target')
+
+def get_candidate_weights(step, add_one=True):
+    w = np.arange(step,1,step)
+    if add_one and (w[len(w)-1]) != 1: w = np.append(w,1)
+    return w
+
+def get_candidate_weights_grid(candidate_weights):
+    return np.array(np.meshgrid(*candidate_weights)).T.reshape(-1, len(candidate_weights)) 
+
 
 if __name__ == "__main__":
     print('')
