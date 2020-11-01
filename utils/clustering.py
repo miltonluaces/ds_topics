@@ -60,12 +60,12 @@ def silhouette_analysis(ds, label_column):
 def weight_features(ds, label_column, weights):
     dsf = ds.drop(label_column, axis=1)
     wds = dsf * weights
-    wds['target'] = ds['target']
+    wds[label_column] = ds[label_column]
     return wds
 
 def weighted_silhouette(ds, label_column, weights):
     wds = weight_features(ds, label_column, weights)
-    return silhouette_scoring(wds, 'target')
+    return silhouette_scoring(wds, label_column)
 
 def get_candidate_weights(step, add_one=True):
     w = np.arange(step,1,step)
@@ -75,6 +75,14 @@ def get_candidate_weights(step, add_one=True):
 def get_candidate_weights_grid(candidate_weights):
     return np.array(np.meshgrid(*candidate_weights)).T.reshape(-1, len(candidate_weights)) 
 
+def get_exponential_weights(n, disc_factor):
+    w = 1
+    W = [1]
+    for i in range(n-1):
+        w = round(w - (w * disc_factor),2)
+        W.append(w)
+    W.reverse()
+    return W   
 
 if __name__ == "__main__":
     print('')
