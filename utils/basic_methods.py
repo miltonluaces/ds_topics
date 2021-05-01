@@ -1,5 +1,3 @@
-import sys
-sys.path.append('D:/source/repos')
 import numpy as np
 import pandas as pd
 import matplotlib.pyplot as plt
